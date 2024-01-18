@@ -52,7 +52,7 @@ jobs:
 
     - name: Create GitHub release
       run: |
-        body="Install the Docker image: \`docker tonur/tenable-exporter:$next_version\`"
+        body="Run the Docker image: \`docker run -p 8080:<your_port> -e TIO_ACCESS_KEY=your_access_key -e TIO_SECRET_KEY=your_secret_key -e SECURITYCENTER_NETWORK_ADDRESS=your_sc_address -e SC_USERNAME=your_sc_username -e SC_PASSWORD=your_sc_password tonur/tenable-exporter:$next_version\`"
 
         curl -X POST -H "Authorization: token ${{ secrets.RELEASE_GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
