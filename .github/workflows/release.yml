@@ -36,6 +36,10 @@ jobs:
         docker login -u "tonur" -p "${{ secrets.DOCKER_ACCESS_TOKEN }}"
         docker push tonur/tenable-exporter:$next_version
 
+        # Tag and push with "latest"
+        docker tag tonur/tenable-exporter:$next_version tonur/tenable-exporter:latest
+        docker push tonur/tenable-exporter:latest
+
     - name: Create and push release branch
       run: |
         git config user.name "GitHub Actions Bot"
@@ -53,4 +57,4 @@ jobs:
         curl -X POST -H "Authorization: token ${{ secrets.RELEASE_GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           "https://api.github.com/repos/${{ github.repository }}/releases" \
-          -d "{\"tag_name\": \"v$next_version\", \"body\": \"$body\", \"draft\": true, \"prerelease\": false}"
+          -d "{\"tag_name\": \"v$next_version\", \"name\": \"$next_version\", \"body\": \"$body\", \"draft\": true, \"prerelease\": false}"
