@@ -1,0 +1,22 @@
+name: Build and Push Docker Image CI
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+env:
+  DOCKER_TAG: $(date +%Y%m%d).${{ github.run_number }} 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build and push the Docker image to Docker Hub
+      run: |
+        docker build . --file Dockerfile --tag tonur/tenable-exporter:${{ env.DOCKER_TAG }}
+        docker login -u "tonur" -p "${{ secrets.DOCKER_ACCESS_TOKEN }}"
+        docker push tonur/tenable-exporter:${{ env.DOCKER_TAG }}

@@ -1,5 +1,11 @@
-FROM gcr.io/distroless/python3-debian12
+FROM python:3.12-slim
 
-COPY . /opt/tenable-exporter
+WORKDIR /app
 
-ENTRYPOINT ["/opt/tenable-exporter/app.py"]
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+
+CMD ["python", "app.py"]

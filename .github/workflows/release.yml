@@ -1,0 +1,56 @@
+name: Release Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type (patch, minor, major)'
+        required: false
+        default: 'patch'
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Bump version
+      id: version
+      run: |
+        current_version=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+        if [[ -z $current_version ]]; then
+          current_version="0.0.0"
+        fi
+    
+        pip install --upgrade semver
+        next_version=$(pysemver nextver $current_version ${{ github.event.inputs.release_type }})
+    
+        echo "Current version: $current_version"
+        echo "Next version: $next_version"
+
+        echo "next_version=$next_version" >> "$GITHUB_ENV"
+
+    - name: Build and push the Docker image to Docker Hub
+      run: |
+        docker build . --file Dockerfile --tag tonur/tenable-exporter:$next_version
+        docker login -u "tonur" -p "${{ secrets.DOCKER_ACCESS_TOKEN }}"
+        docker push tonur/tenable-exporter:$next_version
+
+    - name: Create and push release branch
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        
+        git checkout -b release/$next_version
+        git tag -a v$next_version -m "Release $next_version"
+        git push origin release/$next_version
+        git push origin v$next_version
+
+    - name: Create GitHub release
+      run: |
+        body="Install the Docker image: `docker tonur/tenable-exporter:$next_version`"
+
+        curl -X POST -H "Authorization: token ${{ secrets.RELEASE_GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/${{ github.repository }}/releases" \
+          -d "{\"tag_name\": \"v$next_version\", \"body\": \"$body\", \"draft\": true, \"prerelease\": false}"
