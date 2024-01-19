@@ -7,9 +7,6 @@ from tenable.sc import TenableSC
 
 app = Flask(__name__)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
-
 # Define Prometheus metrics
 enable_scan_metric = os.environ.get('ENABLE_SCAN_METRIC', 'true').lower() == 'true'
 enable_vuln_metric = os.environ.get('ENABLE_VULN_METRIC', 'true').lower() == 'true'
@@ -81,3 +78,8 @@ def healthz():
     if not check_environment_variables():
         return Response("ERROR: Missing environment variables", status=500)
     return Response("OK", status=200)
+
+
+if __name__ == '__main__':
+    from waitress import serve
+    serve(app, port=8080)
