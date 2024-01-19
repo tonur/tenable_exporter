@@ -17,6 +17,7 @@ jobs:
     - name: Bump version
       id: version
       run: |
+        git checkout main
         current_version=$(git tag --list 'v*' --sort=-v:refname | head -n 1 | sed 's/^v//')
         if [[ -z $current_version ]]; then
           current_version="0.0.0"
