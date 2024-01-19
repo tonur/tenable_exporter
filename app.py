@@ -56,22 +56,24 @@ def vulns(sc_network_address, sc_username, sc_password):
 
 @app.route('/metrics')
 def metrics():
-    if not check_environment_variables():
-        return Response("ERROR: Missing environment variables", status=500)
-
-    enable_metrics()
-
-    if enable_scan_metric:
-        tio_access_key = os.environ['TIO_ACCESS_KEY']
-        tio_secret_key = os.environ['TIO_SECRET_KEY']
-        scans(tio_access_key, tio_secret_key)
-
-    if enable_vuln_metric:
-        sc_network_address = os.environ['SECURITYCENTER_NETWORK_ADDRESS']
-        sc_username = os.environ['SC_USERNAME']
-        sc_password = os.environ['SC_PASSWORD']
-        vulns(sc_network_address, sc_username, sc_password)
-
+    try:
+        if not check_environment_variables():
+            return Response("ERROR: Missing environment variables", status=500)
+    
+        enable_metrics()
+    
+        if enable_scan_metric:
+            tio_access_key = os.environ['TIO_ACCESS_KEY']
+            tio_secret_key = os.environ['TIO_SECRET_KEY']
+            scans(tio_access_key, tio_secret_key)
+    
+        if enable_vuln_metric:
+            sc_network_address = os.environ['SECURITYCENTER_NETWORK_ADDRESS']
+            sc_username = os.environ['SC_USERNAME']
+            sc_password = os.environ['SC_PASSWORD']
+            vulns(sc_network_address, sc_username, sc_password)
+    except:
+        print("Fuc")
     return Response(generate_latest(), mimetype='text/plain')
 
 @app.route('/healthz')
