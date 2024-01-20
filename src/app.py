@@ -54,12 +54,12 @@ def metrics():
 
     enable_metrics()
 
-    if missing_tio_variables:
+    if not missing_tio_variables:
         tio_access_key = os.environ['TIO_ACCESS_KEY']
         tio_secret_key = os.environ['TIO_SECRET_KEY']
         tenable_cloud_metrics(tio_access_key, tio_secret_key)
 
-    if missing_sc_variables:
+    if not missing_sc_variables:
         sc_network_address = os.environ['SECURITYCENTER_NETWORK_ADDRESS']
         sc_username = os.environ['SC_USERNAME']
         sc_password = os.environ['SC_PASSWORD']
