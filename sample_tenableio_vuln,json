@@ -1,0 +1,68 @@
+{
+  "asset": {
+    "agent_uuid": "e9ecb7e3316745f8bbb26e39337621eb",
+    "bios_uuid": "663a4a40-8612-f447-a6dc-3f980a391746",
+    "device_type": "general-purpose",
+    "hostname": "test-hostname",
+    "uuid": "1cfb4bc5-c1aa-4801-a724-1117e25ab1e9",
+    "ipv4": "10.100.0.0",
+    "ipv6": "2b5b:1e49:8d01:c2ac:fffd:833e:dfee:13a4",
+    "last_authenticated_results": "2024-01-24T06: 07: 40.427Z",
+    "mac_address": "00: 00: 00: 00: 00: 00",
+    "operating_system": [
+      "Debian GNU/Linux 12 (bookworm)"
+    ],
+    "network_id": "00000000-0000-0000-0000-000000000000",
+    "tracked": true
+  },
+  "output": "\n  Process ID   : 3872055\n  Executable   : /usr/lib/systemd/systemd-resolved\n  Command line : /lib/systemd/systemd-resolved\n",
+  "plugin": {
+    "bid": [
+      25221
+    ],
+    "checks_for_default_account": false,
+    "checks_for_malware": false,
+    "cpe": [],
+    "description": "By logging into the remote host with the supplied credentials, Nessus was able to obtain the name of the process listening on the remote port.\n\nNote that the method used by this plugin only works for hosts running Linux or AIX.",
+    "exploit_available": false,
+    "exploit_framework_canvas": false,
+    "exploit_framework_core": false,
+    "exploit_framework_d2_elliot": false,
+    "exploit_framework_exploithub": false,
+    "exploit_framework_metasploit": false,
+    "exploited_by_malware": false,
+    "exploited_by_nessus": false,
+    "family": "Service detection",
+    "family_id": 16,
+    "has_patch": false,
+    "id": 25221,
+    "in_the_news": false,
+    "name": "Remote listeners enumeration (Linux / AIX)",
+    "modification_date": "2023-11-27T00: 00: 00Z",
+    "publication_date": "2007-05-16T00: 00: 00Z",
+    "risk_factor": "info",
+    "synopsis": "Using the supplied credentials, it was possible to identify the process listening on the remote port.",
+    "unsupported_by_vendor": false,
+    "version": "1.27",
+    "xrefs": [],
+    "type": "local"
+  },
+  "port": {
+    "port": 5355,
+    "protocol": "UDP"
+  },
+  "scan": {
+    "schedule_uuid": "template-1cfb4bc5-c1aa-4801-a724-1117e25ab1e9",
+    "started_at": "2024-01-17T05: 02: 02.504Z",
+    "uuid": "1cfb4bc5-c1aa-4801-a724-1117e25ab1e9"
+  },
+  "severity": "info",
+  "severity_id": 0,
+  "severity_default_id": 0,
+  "severity_modification_type": "NONE",
+  "first_found": "2023-11-01T05: 42: 05.910Z",
+  "last_found": "2024-01-17T05: 59: 38.993Z",
+  "state": "OPEN",
+  "indexed": "2024-01-17T06: 00: 19.579222Z",
+  "source": "AGENT"
+}
