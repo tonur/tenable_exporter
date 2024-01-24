@@ -1,19 +1,15 @@
-from prometheus_client import start_http_server, Gauge
+from prometheus_client import start_http_server, Counter
 from tenable.io import TenableIO
 import logging
 import os
 import time
 import signal
 
-def signal_handler(sig, frame):
-    logging.info("Received termination signal. Exiting gracefully.")
-    exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 # Create Prometheus metrics
-vulnerability_metric = Gauge('tenable_vulnerability_info', 'Tenable Vulnerability Information',
-                             ['asset_uuid', 'plugin_id', 'plugin_name', 'severity', 'state', 'source'])
+asset_vulnerability_metric = Counter('tenable_asset_vulnerabilities', 'Tenable Asset Vulnerabilities',
+                                     ['asset_uuid', 'severity'])
 
 def get_environment_variable(variable):
     return os.environ.get(variable).strip()
@@ -26,14 +22,10 @@ def fetch_tenable_data(tio_access_key, tio_secret_key):
             asset = vuln.get('asset', {})
             plugin = vuln.get('plugin', {})
 
-            vulnerability_metric.labels(
+            asset_vulnerability_metric.labels(
                 asset_uuid=asset.get('uuid', ''),
-                plugin_id=plugin.get('id', ''),
-                plugin_name=plugin.get('name', ''),
-                severity=vuln.get('severity', ''),
-                state=vuln.get('state', ''),
-                source=vuln.get('source', '')
-            ).set(1)
+                severity=vuln.get('severity', '')
+            ).inc()
 
     except Exception as e:
         logging.exception(f"Error fetching Tenable data: {e}")
