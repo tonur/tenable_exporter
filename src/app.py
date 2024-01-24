@@ -1,8 +1,9 @@
-from prometheus_client import start_http_server, Counter
+from prometheus_client import start_http_server, Gauge, Counter
 from tenable.io import TenableIO
 import logging
 import os
 import time
+import datetime
 import signal
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -10,6 +11,16 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 # Create Prometheus metrics
 asset_vulnerability_metric = Counter('tenable_asset_vulnerabilities', 'Tenable Asset Vulnerabilities',
                                      ['asset_uuid', 'severity'])
+asset_compliance_metric = Gauge('tenable_asset_compliance', 'Tenable Asset Compliance',
+                                ['asset_uuid', 'policy_name'])
+vulnerability_age_metric = Gauge('tenable_vulnerability_age', 'Tenable Vulnerability Age',
+                                 ['vulnerability_id'])
+remediation_time_metric = Gauge('tenable_remediation_time', 'Tenable Remediation Time',
+                                ['vulnerability_id'])
+asset_inventory_metric = Gauge('tenable_asset_inventory', 'Tenable Asset Inventory',
+                               ['asset_type'])
+vulnerability_severity_metric = Counter('tenable_vulnerability_severity', 'Tenable Vulnerability Severity',
+                                        ['severity'])
 
 def get_environment_variable(variable):
     return os.environ.get(variable).strip()
@@ -24,6 +35,26 @@ def fetch_tenable_data(tio_access_key, tio_secret_key):
 
             asset_vulnerability_metric.labels(
                 asset_uuid=asset.get('uuid', ''),
+                severity=vuln.get('severity', '')
+            ).inc()
+
+            last_found_str = vuln.get('last_found', '')
+            last_found_dt = datetime.datetime.strptime(last_found_str, '%Y-%m-%dT%H:%M:%S.%fZ')
+            last_found_unix = int(last_found_dt.timestamp())
+
+            vulnerability_age_metric.labels(
+                vulnerability_id=vuln.get('plugin_id', '')
+            ).set(time.time() - last_found_unix)
+
+            remediation_time_metric.labels(
+                vulnerability_id=vuln.get('plugin_id', '')
+            ).set(vuln.get('remediation', {}).get('days_to_remediate', 0))
+
+            asset_inventory_metric.labels(
+                asset_type=asset.get('type', '')
+            ).inc()
+
+            vulnerability_severity_metric.labels(
                 severity=vuln.get('severity', '')
             ).inc()
 
