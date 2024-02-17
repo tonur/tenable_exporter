@@ -1,0 +1,11 @@
+# FoldersCreateRequest
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**name** | **String** | The name of the folder.  **Note:** Folder names must be unique. Folder names can include any UTF-8 characters. | 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

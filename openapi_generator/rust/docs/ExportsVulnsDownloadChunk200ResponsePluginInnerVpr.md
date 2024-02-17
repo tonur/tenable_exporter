@@ -1,0 +1,13 @@
+# ExportsVulnsDownloadChunk200ResponsePluginInnerVpr
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**score** | Option<**i32**> | The Vulnerability Priority Rating (VPR) for the vulnerability. If a plugin is designed to detect multiple vulnerabilities, the VPR represents the highest value calculated for a vulnerability associated with the plugin. For more information, see <a href=\"https://docs.tenable.com/vulnerability-management/Content/Analysis/RiskMetrics.htm\" target=\"_blank\">Severity vs. VPR</a> in the <i>Tenable Vulnerability Management User Guide</i>. | [optional]
+**drivers** | Option<[**serde_json::Value**](.md)> | The key drivers Tenable uses to calculate a vulnerability's VPR. For more information, see [Vulnerability Priority Rating Drivers](doc:vpr-drivers-tio). | [optional]
+**updated** | Option<**String**> | The ISO timestamp when Tenable Vulnerability Management last imported the VPR for this vulnerability. Tenable Vulnerability Management imports a VPR value the first time you scan a vulnerability on your network. Then, Tenable Vulnerability Management automatically re-imports new and updated VPR values daily. | [optional]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
