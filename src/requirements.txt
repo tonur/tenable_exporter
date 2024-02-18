@@ -1,2 +1,0 @@
-prometheus-client==0.19.0
-pyTenable==1.4.18
