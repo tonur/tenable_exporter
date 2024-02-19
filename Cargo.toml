@@ -18,3 +18,4 @@ prometheus = { version = "0.9", features = ["process"] }
 prometheus-client = "0.22.1"
 actix-web = "4.5.1"
 actix-rt = "2.9.0"
+async-std = "1.12.0"

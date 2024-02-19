@@ -1,4 +1,5 @@
 use std::sync::Mutex;
+use async_std::task;
 use clap::Parser;
 use openapi::apis::configuration;
 use openapi::apis::configuration::ApiKey;
@@ -103,12 +104,28 @@ pub async fn fetch_data(metrics: web::Data<Metrics>, arguments: web::Data<AppArg
         key: format!("accessKey={};secretKey={}", arguments.tio_access_key, arguments.tio_secret_key),
     });
 
-    let scans = openapi::apis::scans_api::scans_list(&configuration, None, None).await;
-    for scan in scans.unwrap().scans.unwrap() {
-        let scan_result = openapi::apis::scan_results_api::scans_host_details(&configuration, scan.uuid.unwrap().as_ref(), 0, None, None).await;
-        
+    let exports_vulns_request_export_request = openapi::models::ExportsVulnsRequestExportRequest { num_assets: 100, include_unlicensed: None, filters: None };
+    let request_vulns_export = openapi::apis::exports_api::exports_vulns_request_export(&configuration, exports_vulns_request_export_request).await;
+    let export_uuid = request_vulns_export.unwrap().export_uuid.unwrap();
+    let vulns_export_status = openapi::apis::exports_api::exports_vulns_export_status(&configuration, &export_uuid).await;
+    let export_status = vulns_export_status.unwrap().status.unwrap();
+    let mut export_status_string = export_status.status.unwrap();
+    let mut total_chunks = export_status.total_chunks.unwrap();
+    while export_status_string != "FINISHED" {
+        task::sleep(Duration::from_secs(1)).await;
+        let vulns_export_status = openapi::apis::exports_api::exports_vulns_export_status(&configuration, &export_uuid).await;
+        let export_status = vulns_export_status.unwrap().status.unwrap();
+        total_chunks = export_status.total_chunks.unwrap();
+        export_status_string = export_status.status.unwrap();
     }
 
+    for chunk_id in 0..total_chunks {
+        let chunk = openapi::apis::exports_api::exports_vulns_download_chunk(&configuration, &export_uuid, chunk_id).await;
+        let chunk = chunk.unwrap();
+        chunk.severity.unwrap();
+        
+        metrics.tenable_vulnerability_severity.get_or_create(&()).inc();
+    }
 }
 
 #[derive(Parser, Debug)]
