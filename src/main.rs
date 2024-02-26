@@ -3,8 +3,18 @@ use async_std::task;
 use clap::Parser;
 use actix_web::{web, App, HttpServer};
 use actix_web_opentelemetry::{PrometheusMetricsHandler, RequestMetrics, RequestTracing};
-use opentelemetry::global;
-use opentelemetry_sdk::metrics::SdkMeterProvider;
+use opentelemetry::{global, KeyValue};
+use opentelemetry_sdk::{metrics::SdkMeterProvider, Resource};
+use lazy_static::lazy_static;
+use prometheus::{HistogramOpts, HistogramVec, IntCounter, IntCounterVec, IntGauge, Opts, Registry};
+
+lazy_static! {
+    pub static ref REGISTRY: Registry = Registry::new();
+    pub static ref TENABLE_VULNERABILITY_INFO: IntCounterVec = IntCounterVec::new(
+        Opts::new("tenable_vulnerability_info", "Tenable vulnerability info"),
+        &["severity"],
+    ).unwrap();
+}
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None)]
@@ -17,15 +27,16 @@ pub struct AppArguments {
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Configure prometheus or your preferred metrics service
-    let registry = prometheus::Registry::new();
+    
+    REGISTRY.register(Box::new(TENABLE_VULNERABILITY_INFO.clone())).unwrap();
     let exporter = opentelemetry_prometheus::exporter()
-        .with_registry(registry.clone())
+        .with_registry(REGISTRY.clone())
         .build()?;
 
     // set up your meter provider with your exporter(s)
     let provider = SdkMeterProvider::builder()
         .with_reader(exporter)
+        .with_resource(Resource::new([KeyValue::new("service.name", "tenable_exporter")]))
         .build();
     global::set_meter_provider(provider);
 
@@ -43,7 +54,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         App::new()
             .wrap(RequestTracing::new())
             .wrap(RequestMetrics::default())
-            .route("/metrics", web::get().to(PrometheusMetricsHandler::new(registry.clone())))
+            .route("/metrics", web::get().to(PrometheusMetricsHandler::new(REGISTRY.clone())))
         })
         .bind("localhost:8080")?
         .run()
@@ -82,5 +93,6 @@ pub async fn fetch_data(arguments: AppArguments) {
         let chunk = chunk.unwrap();
         chunk.severity.unwrap();
         //metrics.tenable_vulnerability_severity.get_or_create(&()).inc();
+        TENABLE_VULNERABILITY_INFO.with_label_values(&["Critical"]).inc();
     }
 }

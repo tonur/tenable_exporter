@@ -18,3 +18,4 @@ prometheus = "0.13.3"
 opentelemetry = "0.22.0"
 opentelemetry_sdk = { version = "0.22.0", features = ["rt-tokio"] }
 opentelemetry-prometheus = "0.15.0"
+lazy_static = "1.4.0"
