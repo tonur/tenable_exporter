@@ -121,3 +121,46 @@ pub async fn scans_host_details(configuration: &configuration::Configuration, sc
         Err(Error::ResponseError(local_var_error))
     }
 }
+
+/// Returns the output for a specified plugin.  **Caution:** This endpoint is deprecated. Tenable recommends that you use the [Exports API](ref:exports) endpoints instead. Please update any existing integrations that your organization has since this endpoint will be removed.  **Note:** This endpoint can only return scan results that are younger than 35 days. For scan results that are older than 35 days, use the [POST /scans/{scan_id}/export](ref:scans-export-request) endpoint instead. Output for an individual plugin is limited to 1,024 KB (1 MB). Additionally, this endpoint has a rate limit of 8 requests per minute. For more information, see [Rate Limiting](doc:rate-limiting).<div class=\"perms-callout\">Requires SCAN OPERATOR [24] user permissions and CAN VIEW [16] scan permissions. See [Permissions](doc:permissions).</div>
+pub async fn scans_plugin_output(configuration: &configuration::Configuration, scan_uuid: &str, host_id: i32, plugin_id: i32, history_id: Option<i32>, history_uuid: Option<&str>) -> Result<crate::models::ScansPluginOutput200Response, Error<ScansPluginOutputError>> {
+    let local_var_configuration = configuration;
+
+    let local_var_client = &local_var_configuration.client;
+
+    let local_var_uri_str = format!("{}/scans/{scan_uuid}/hosts/{host_id}/plugins/{plugin_id}", local_var_configuration.base_path, scan_uuid=crate::apis::urlencode(scan_uuid), host_id=host_id, plugin_id=plugin_id);
+    let mut local_var_req_builder = local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+
+    if let Some(ref local_var_str) = history_id {
+        local_var_req_builder = local_var_req_builder.query(&[("history_id", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = history_uuid {
+        local_var_req_builder = local_var_req_builder.query(&[("history_uuid", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
+        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
+        let local_var_key = local_var_apikey.key.clone();
+        let local_var_value = match local_var_apikey.prefix {
+            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
+            None => local_var_key,
+        };
+        local_var_req_builder = local_var_req_builder.header("X-ApiKeys", local_var_value);
+    };
+
+    let local_var_req = local_var_req_builder.build()?;
+    let local_var_resp = local_var_client.execute(local_var_req).await?;
+
+    let local_var_status = local_var_resp.status();
+    let local_var_content = local_var_resp.text().await?;
+
+    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        serde_json::from_str(&local_var_content).map_err(Error::from)
+    } else {
+        let local_var_entity: Option<ScansPluginOutputError> = serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        Err(Error::ResponseError(local_var_error))
+    }
+}
+

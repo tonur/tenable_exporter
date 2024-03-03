@@ -85,7 +85,7 @@ pub struct ExportsAssetsDownloadChunk200Response {
     /// The unique identifier of the Linux instance in Amazon EC2. For more information, see the Amazon Elastic Compute Cloud Documentation.
     #[serde(rename = "aws_ec2_instance_id", skip_serializing_if = "Option::is_none")]
     pub aws_ec2_instance_id: Option<String>,
-    /// The unique identifier of the Nessus agent that identified the asset.
+    /// This property represents the `tenable_uuid`. This identifier can originate from either an agent or a credentialed remote Nessus scan. If no agent is present on the asset, a UUID is assigned by Tenable Vulnerability Management during a credentialed scan when the [Create unique identifier on hosts scanned with credentials](https://docs.tenable.com/vulnerability-management/Content/Scans/AdvancedSettings.htm) option is enabled. Note that no UUID is set for an uncredentialed non-agent scans.
     #[serde(rename = "agent_uuid", skip_serializing_if = "Option::is_none")]
     pub agent_uuid: Option<String>,
     /// The BIOS UUID of the asset.

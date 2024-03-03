@@ -31,6 +31,9 @@ pub struct ExportsVulnsDownloadChunk200ResponseAssetInner {
     /// The UUID of the asset where a scan found the vulnerability.
     #[serde(rename = "uuid", skip_serializing_if = "Option::is_none")]
     pub uuid: Option<String>,
+    /// The IPv4 address of the asset where a scan found the vulnerability.
+    #[serde(rename = "ipv4", skip_serializing_if = "Option::is_none")]
+    pub ipv4: Option<String>,
     /// The IPv6 address of the asset where a scan found the vulnerability.
     #[serde(rename = "ipv6", skip_serializing_if = "Option::is_none")]
     pub ipv6: Option<String>,
@@ -69,6 +72,7 @@ impl ExportsVulnsDownloadChunk200ResponseAssetInner {
             fqdn: None,
             hostname: None,
             uuid: None,
+            ipv4: None,
             ipv6: None,
             last_authenticated_results: None,
             last_unauthenticated_results: None,

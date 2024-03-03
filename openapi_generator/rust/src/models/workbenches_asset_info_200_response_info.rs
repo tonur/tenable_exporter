@@ -91,7 +91,7 @@ pub struct WorkbenchesAssetInfo200ResponseInfo {
     /// The system types as reported by Plugin ID 54615. Possible values include `router`, `general-purpose`, `scan-host`, and `embedded`.
     #[serde(rename = "system_type", skip_serializing_if = "Option::is_none")]
     pub system_type: Option<Vec<String>>,
-    /// The UUID of the agent if an agent is present on the asset. If no agent is present on the asset, then the UUID is a unique identifier assigned by Tenable.io during a credentialed scan when the [Create unique identifier on hosts scanned with credentials](https://docs.tenable.com/vulnerability-management/Content/Scans/Classic/AdvancedSettings.htm) option is enabled. Note that no UUID is set for uncredentialed, non-agent scans.
+    /// This identifier can originate from either an agent or a credentialed remote Nessus scan. If no agent is present on the asset, a UUID is assigned by Tenable Vulnerability Management during a credentialed scan when the [Create unique identifier on hosts scanned with credentials](https://docs.tenable.com/vulnerability-management/Content/Scans/AdvancedSettings.htm) option is enabled. Note that no UUID is set for an uncredentialed non-agent scans.
     #[serde(rename = "tenable_uuid", skip_serializing_if = "Option::is_none")]
     pub tenable_uuid: Option<Vec<String>>,
     /// The hostnames that scans have associated with the asset record.

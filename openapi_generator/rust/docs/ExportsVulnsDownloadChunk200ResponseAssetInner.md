@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **fqdn** | Option<**String**> | The fully-qualified domain name of the asset where a scan found the vulnerability. | [optional]
 **hostname** | Option<**String**> | The host name of the asset where a scan found the vulnerability. | [optional]
 **uuid** | Option<**String**> | The UUID of the asset where a scan found the vulnerability. | [optional]
+**ipv4** | Option<**String**> | The IPv4 address of the asset where a scan found the vulnerability. | [optional]
 **ipv6** | Option<**String**> | The IPv6 address of the asset where a scan found the vulnerability. | [optional]
 **last_authenticated_results** | Option<**String**> | The last date credentials were used successfully to scan the asset. | [optional]
 **last_unauthenticated_results** | Option<**String**> | The last date when the asset was scanned without using credentials | [optional]
