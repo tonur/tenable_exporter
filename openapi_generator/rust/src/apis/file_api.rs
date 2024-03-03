@@ -26,7 +26,7 @@ pub enum FileUploadError {
 
 
 /// Uploads a file.<div class=\"perms-callout\">Requires BASIC [16] user permissions. See [Permissions](doc:permissions).</div>
-pub async fn file_upload(configuration: &configuration::Configuration, no_enc: Option<i32>, filedata: Option<std::path::PathBuf>) -> Result<crate::models::FileUpload200Response, Error<FileUploadError>> {
+pub async fn file_upload(configuration: &configuration::Configuration, no_enc: Option<i32>, _filedata: Option<std::path::PathBuf>) -> Result<crate::models::FileUpload200Response, Error<FileUploadError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
@@ -48,7 +48,7 @@ pub async fn file_upload(configuration: &configuration::Configuration, no_enc: O
         };
         local_var_req_builder = local_var_req_builder.header("X-ApiKeys", local_var_value);
     };
-    let mut local_var_form = reqwest::multipart::Form::new();
+    let local_var_form = reqwest::multipart::Form::new();
     // TODO: support file upload for 'Filedata' parameter
     local_var_req_builder = local_var_req_builder.multipart(local_var_form);
 
